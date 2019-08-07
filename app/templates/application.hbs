@@ -1,5 +1,45 @@
-{{!-- The following component displays Ember's default welcome message. --}}
-<WelcomePage />
-{{!-- Feel free to remove this! --}}
+<div style="display: flex;">
+  <div>
+    <GMap
+      @lat={{this.london.lat}}
+      @lng={{this.london.lng}}
+      @zoom={{12}}
+      @onLoad={{action "getMapInstance"}} as |g|>
 
-{{outlet}}
+      {{g.canvas}}
+
+      {{~#each this.londonLocations key="id" as |loc|~}}
+        {{~#if this.showOldMarkers~}}
+          <g.marker @lat={{loc.lat}} @lng={{loc.lng}} />
+        {{~/if~}}
+
+        {{~#if this.showOctaneMarkers~}}
+          {{~#if g.map~}}
+            <GMap::OctaneMarker @map={{g.map}} @lat={{loc.lat}} @lng={{loc.lng}} />
+          {{~/if~}}
+        {{~/if~}}
+
+        {{~#if this.showCustomMarkers~}}
+          {{~#if g.map~}}
+            <GMap::CustomMarker @map={{g.map}} @lat={{loc.lat}} @lng={{loc.lng}} />
+          {{~/if~}}
+        {{~/if~}}
+
+        {{~#if this.showHelperMarkers~}}
+          {{~helper-marker map=g.map lat=loc.lat lng=loc.lng~}}
+        {{~/if~}}
+      {{~/each~}}
+    </GMap>
+  </div>
+  <div style="display: flex; flex-direction: column;">
+    <button type="button" {{action "toggleOldMarkers"}}>Show Old Markers</button>
+    <button type="button" {{action "toggleOctaneMarkers"}}>Show Octane Markers</button>
+    <button type="button" {{action "toggleCustomMarkers"}}>Show Custom Markers</button>
+    <button type="button" {{action "toggleHelperMarkers"}}>Show Helper Markers</button>
+    <button type="button" {{action "drawMarkers"}}>Show Manual Markers</button>
+
+    <button type="button" {{action "testInSequence"}}>Test all markers</button>
+  </div>
+</div>
+
+{{!-- {{outlet}} --}}
